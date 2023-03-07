@@ -1,16 +1,23 @@
 import React from "react";
 import "./App.css";
-
 const App = () => {
   const [todos, setTodos] = React.useState([]);
   const [todo, setTodo] = React.useState("");
-
   const [todoEditing, setTodoEditing] = React.useState(null);
   const [editingText, setEditingText] = React.useState("");
-
+  React.useEffect(() => {
+    const json = localStorage.getItem("todos");
+    const loadedTodos = JSON.parse(json);
+    if (loadedTodos) {
+      setTodos(loadedTodos);
+    }
+  }, []);
+  React.useEffect(() => {
+    const json = JSON.stringify(todos);
+    localStorage.setItem("todos", json);
+  }, [todos]);
   function handleSubmit(e) {
     e.preventDefault();
-
     const newTodo = {
       id: new Date().getTime(),
       text: todo.trim(),
@@ -30,7 +37,6 @@ const App = () => {
     let updatedTodos = [...todos].filter((todo) => todo.id !== id);
     setTodos(updatedTodos);
   }
-
   function toggleComplete(id) {
     let updatedTodos = [...todos].map((todo) => {
       if (todo.id === id) {
@@ -40,7 +46,6 @@ const App = () => {
     });
     setTodos(updatedTodos);
   }
-
   function submitEdits(id) {
     const updatedTodos = [...todos].map((todo) => {
       if (todo.id === id) {
@@ -51,7 +56,6 @@ const App = () => {
       setTodos(updatedTodos);
       setTodoEditing(null);
     }
-
     return (
         <div id="todo-list">
           <h1>Todo List</h1>
@@ -95,6 +99,5 @@ const App = () => {
         </div>
       );
     };
-
 export default App;
 
